@@ -1,0 +1,32 @@
+\section{Preliminaries}
+
+The tech stack is as follows:
+\begin{itemize}
+  \item IntelliJ Idea Ultimate as Java IDE and Maven as build system
+    \begin{itemize}
+      \item Datagrip as SQL IDE
+    \end{itemize}
+  \item MariaDB, a retrocompatible fork of MySQL
+  \item Tomcat as application server
+\end{itemize}
+
+\begin{hint}[OS compatibility]{}
+  Although the guide has been verified on Arch Linux, since all of JetBrains' IDEs are cross-platform, apart from the installation process, commands and paths the configuration will be the same on \textit{every} operating system.
+\end{hint}
+
+Programs and dependencies needed:
+\begin{minted}{shell}
+  # from ufficial repositories
+  sudo pacman -S jdk21-openjdk mariadb tomcat10 maven
+
+  # from AUR
+  yay -S intellij-idea-ultimate-edition mariadb-jdbc
+\end{minted}
+
+to install \texttt{yay} check the \href{https://github.com/Jguer/yay?tab=readme-ov-file#installation}{official repository}.
+
+All of Datagrip functionalities are integrated in every JetBrains' IDE, so its not stricly needed -- however, if you want install Datagrip as a standalone application:
+\begin{minted}{shell}
+  # from AUR
+  yay -S datagrip datagrip-jre
+\end{minted}

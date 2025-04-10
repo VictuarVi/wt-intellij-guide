@@ -1,0 +1,98 @@
+\documentclass[12pt]{extarticle}
+
+% ------------- [ METADATA ] -------------
+\begin{filecontents*}[overwrite]{\jobname.xmpdata}
+  \Title{
+    Tecnologie informatiche per il Web – IntelliJ Guide
+  },
+  \Author{Vittorio Robecchi},
+  \Producer{LuaLaTeX},
+  \Creator{LaTeX},
+\end{filecontents*}
+\usepackage{setspace}
+\PassOptionsToPackage{
+  hyperfootnotes=true,
+  colorlinks=true,
+  linkcolor=red,
+  citecolor=blue,
+  filecolor=blue,
+  urlcolor=blue,
+}{hyperref}
+\usepackage[a-3u]{pdfx} % PDF/A - 3u
+
+\usepackage[paper=a4paper,margin=2cm]{geometry}
+\usepackage{listings}
+\usepackage{minted} % python-pigments needed
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[T1]{fontenc}
+\usepackage{cleveref}
+\usepackage[indent]{parskip}
+\usepackage{xcolor}
+\usepackage[framemethod=TikZ]{mdframed}
+
+\newenvironment{hint}[2][]{%
+  \mdfsetup{skipabove=10pt,frametitle={%
+      \tikz[baseline=(current bounding box.east),outer sep=0pt]
+      \node[anchor=east,rectangle,fill=blue!20]
+  {#1};}}%
+  \mdfsetup{innertopmargin=2pt,linecolor=blue!20,%
+    linewidth=2pt,topline=true,%
+    frametitleaboveskip=\dimexpr-\ht\strutbox\relax
+  }
+  \begin{mdframed}[]\relax%
+  \label{#2}}{
+\end{mdframed}}
+
+\newenvironment{tip}[2][]{%
+  \mdfsetup{skipabove=10pt,frametitle={%
+      \tikz[baseline=(current bounding box.east),outer sep=0pt]
+      \node[anchor=east,rectangle,fill=orange!20]
+  {#1};}}%
+  \mdfsetup{innertopmargin=2pt,linecolor=orange!20,%
+    linewidth=2pt,topline=true,%
+    frametitleaboveskip=\dimexpr-\ht\strutbox\relax
+  }
+  \begin{mdframed}[]\relax%
+  \label{#2}}{
+\end{mdframed}}
+
+\newenvironment{warning}[2][]{%
+  \mdfsetup{skipabove=10pt,frametitle={%
+      \tikz[baseline=(current bounding box.east),outer sep=0pt]
+      \node[anchor=east,rectangle,fill=red!20]
+  {#1};}}%
+  \mdfsetup{innertopmargin=2pt,linecolor=red!20,%
+    linewidth=2pt,topline=true,%
+    frametitleaboveskip=\dimexpr-\ht\strutbox\relax
+  }
+  \begin{mdframed}[]\relax%
+  \label{#2}}{
+\end{mdframed}}
+
+\newcommand\red[1]{\textcolor{red}{#1}}
+
+\title{
+  Tecnologie informatiche per il Web \\
+  % \rule{0.5\textwidth}{1pt} \\
+  IntelliJ Guide
+}
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+% ad ogni sezione, vai a capo
+\let\latexsection\section
+\renewcommand{\section}{
+  \newpage
+  \latexsection
+}
+
+% sections
+\input{sections/preliminaries.tex}
+\input{sections/intellij.tex}
+\input{sections/datagrip.tex}
+
+\end{document}
