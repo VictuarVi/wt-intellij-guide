@@ -31,10 +31,10 @@
       \centering
       \includegraphics[width=0.6\textwidth]{img/intellij/intellij_5.png}
     \end{figure}
-    note that Servlet is already added as dependency.
+    Note that Servlet is already added as dependency.
 \end{enumerate}
 
-\begin{tip}[Permissions error]{}
+\begin{hint}[Permissions error]{}
   After a test, IntelliJ could report an error stating it cannot copy \texttt{/usr/share/tomcat10/conf} -- this maybe caused by permissions:
   \begin{figure}[H]
     \centering
@@ -46,7 +46,7 @@
     \begin{minted}{shell}
       sudo chmod -R 777 /usr/share/tomcat10/conf
     \end{minted}
-\end{tip}
+\end{hint}
 
 \subsection{Database configuration}\label{sec: db_intellij}
 
@@ -72,7 +72,7 @@
     MariaDB [(none)]> GRANT PRIVILEGES ON *.* TO 'name'@'localhost';
     MariaDB [(none)]> quit;
     \end{minted}
-    this is needed since in order to create a database \emph{you need permission} to do so. If you want to check:
+    this is needed since in order to create a database \emph{you need permission} to do so. If you want to verify:
     \begin{minted}{shell}
     MariaDB [(none)]> SHOW ALL PRIVILEGES FOR 'name'@'localhost';
     \end{minted}
@@ -82,6 +82,7 @@
       \centering
       \includegraphics[width=0.6\textwidth]{img/intellij/intellij_8.png}
       \caption{Database configuration in IntelliJ.}
+      \label{fig: intellij-db-config}
     \end{figure}
 
   \item To import a MySQL dump execute the following command:
@@ -92,7 +93,7 @@
 
     \newpage
 
-  \item From the above left menu add the data source:
+  \item Add the data source from \autoref{fig: intellij-db-config}:
     \begin{itemize}
       \item Select MariaDB
         \begin{figure}[H]
@@ -102,7 +103,7 @@
           \caption{Selecting MariaDB as source.}
         \end{figure}
       \item \texttt{user}, \texttt{password} from step 2
-      \item Name of the database from step 5 -- to see available databases:
+      \item Name of the database from step 5 -- to check available databases:
     \begin{minted}{shell}
     sudo mariadb
     MariaDB [(none)]> SHOW DATABASES;
@@ -130,7 +131,7 @@ Add the following to \texttt{pom.xml}:
    <version>3.4.1</version>
   </dependency>
 \end{minted}
-and synchronize Maven, which then adds all the necessary drivers. Last but not least, verify the connection by creating the \texttt{ConnectionTester} class:
+and synchronize Maven, which then downloads all the necessary files. Last but not least, verify the connection by creating the \texttt{ConnectionTester} class:
 \begin{minted}{java}
   import java.sql.*;
 
@@ -164,9 +165,21 @@ and synchronize Maven, which then adds all the necessary drivers. Last but not l
 \end{minted}
 by editing \texttt{DATABASE}, \texttt{USER} and \texttt{PASSWORD} accordingly.
 
-\subsection{Configure Maven dependencies}
+\newpage
 
-In order to make the current Eclipse projects to work, the \texttt{pom.xml} file needs some other dependencies:
+\subsection{Convert Eclipse projects}
+
+Briefly the steps are:
+\begin{enumerate}
+  \item Figure out the dependencies and their versions
+    \begin{itemize}
+      \item This applies both to libraries (such as thymeleaf) and Java JDK
+    \end{itemize}
+  \item Paste the \texttt{/src} directory from the original project ZIP
+  \item Add Tomcat run configuration
+\end{enumerate}
+
+Start by adding the dependencies to the \texttt{pom.xml}:
 \begin{minted}{xml}
 <dependencies>
     <!-- Jakarta EE servlet (jsp, jstl) -->
@@ -186,12 +199,63 @@ In order to make the current Eclipse projects to work, the \texttt{pom.xml} file
         <artifactId>thymeleaf</artifactId>
         <version>3.1.3.RELEASE</version>
     </dependency>
+    <!-- Apache Commons -->
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.17.0</version>
+    </dependency>
 </dependencies>
 \end{minted}
 
-\textbf{Be sure} to use the correct versions. Search them on the Maven repository with the following URL scheme: \texttt{https://mvnrepository.com/artifact/\red{groupId}/\red{artifactId}}.
+\begin{warning}[Pick the correct versions]{}
+  \textbf{Be sure} to check for the correct versions. To do so, open the Eclipse's file \texttt{.classpath} and search in it. For example:
+  {\scriptsize
+  \begin{minted}{xml}
+  <?xml version="1.0" encoding="UTF-8"?>
+  <classpath>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug
+    .ui.launcher.StandardVMType/JavaSE-21">
+      <attributes>
+        <attribute name="module" value="true"/>
+      </attributes>
+    </classpathentry>
+    <classpathentry kind="src" path="src/main/java"/>
+    <classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+    <classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+    <classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/apache-commons-lang.jar"/>
+    <classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/mysql-connector-j-8.0.32.jar"/>
+    <classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/attoparser-2.0.7.RELEASE.jar"/>
+    <classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/javassist-3.29.0-GA.jar"/>
+    <classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/ognl-3.3.4.jar"/>
+    <classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/slf4j-api-2.0.16.jar"/>
+    <classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/thymeleaf-3.1.3.RELEASE.jar"/>
+    <classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/unbescape-1.1.6.RELEASE.jar"/>
+    <classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat
+    .runtimeTarget/Apache Tomcat v10.1">
+      <attributes>
+        <attribute name="owner.project.facets" value="jst.web"/>
+      </attributes>
+    </classpathentry>
+    <classpathentry kind="output" path="build/classes"/>
+  </classpath>
+  \end{minted}
+  }
+  If you look closely, you'll see that the dependencies of this project are:
+  \begin{itemize}
+    \item Java 21
+    \item mysql-connector-j-8.0.3
+    \item attoparser-2.0.7.RELEASE
+    \item javassist-3.29.0-GA
+    \item ognl-3.3.4
+    \item slf4j-api-2.0.1
+    \item thymeleaf 3.1.3.RELEASE
+    \item unbescape-1.1.6.RELEASE
+    \item Tomcat v10.1
+  \end{itemize}
+\end{warning}
 
-Also, you might need to set the JDK version:
+And to set the JDK version:
 \begin{minted}{xml}
     <properties>
         <!-- Properties set for Java 21 -->
@@ -201,9 +265,37 @@ Also, you might need to set the JDK version:
     </properties>
 \end{minted}
 
+Search them on the Maven repository with the following URL scheme:
+
+\begin{center}
+  \texttt{https://mvnrepository.com/artifact/\red{groupId}/\red{artifactId}}.
+\end{center}
+
+To build the application and deploy it you also need:
+\begin{minted}{xml}
+  <build>
+      <plugins>
+          <plugin>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.13.0</version>
+          </plugin>
+          <plugin>
+              <artifactId>maven-war-plugin</artifactId>
+              <version>3.2.3</version>
+          </plugin>
+      </plugins>
+  </build>
+\end{minted}
+
+Finally paste the \texttt{/src} directory from the desired project and configure Tomcat. An example can be seen in the \texttt{tomcat\_config.xml} file, which will have to be pasted into \texttt{.idea/run- Configurations} folder.
+
+\begin{tip}[Optimize the conversion]{}
+  Since these steps are the same for every project, I'd suggest to create a \texttt{template} folder which houses the \texttt{pom.xml} file along with the Tomcat configuration. This way, to convert a project you will only have to create a new directory and then paste in it the \texttt{src/} folder and the contents of \texttt{template}.
+\end{tip}
+
 \begin{warning}[Follow the standard structure]{}
   Finally, the directory tree will have to look like:
-    \begin{verbatim}
+  \begin{verbatim}
     src/
     |-- main/
     |   |-- java/
@@ -218,7 +310,7 @@ Also, you might need to set the JDK version:
     LICENSE.txt
     README.md
     pom.xml
-    \end{verbatim}
+  \end{verbatim}
 
   In accordance with the \href{https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html}{Maven standard directory layout}.
 
